@@ -1,0 +1,21 @@
+FROM php:7.4-fpm
+
+# Instalar la extensión mysqli
+RUN docker-php-ext-install mysqli
+
+# Instalar Python y pip
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    openjdk-11-jdk
+
+# Instalar Scrapy y BeautifulSoup4
+RUN pip3 install scrapy beautifulsoup4
+
+# Copiar archivos desde tu sistema local al contenedor
+COPY ./ProyectoSostenibilidad /var/TFG/ProyectoSostenibilidad
+COPY ./terminos.txt /var/TFG/Terminos/terminos.txt
+COPY ./newspider.py /var/TFG/newspider.py
+
+# Cambiar los permisos del archivo JAR
+RUN chmod -R 777 /var/TFG/

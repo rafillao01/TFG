@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rcordobam
+      MYSQL_DATABASE: ProyectoSostenibilidad
+      MYSQL_USER: rcordobam
+      MYSQL_PASSWORD: rcordobam
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: password
+
+  nginx:
+    build: .
+    container_name: nginx_server
+    ports:
+      - "80:80"
+    volumes:
+      - ./php:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  php: 
+    build: 
+      context: .
+      dockerfile: Dockerfile_php
+    container_name: php_fpm
+    volumes:
+      - ./php:/var/www/html
+    depends_on:
+      - mysql
